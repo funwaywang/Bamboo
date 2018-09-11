@@ -5,9 +5,11 @@ VisualStudioVersion = 15.0.28010.2016
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bamboo.Manage", "Bamboo.Manage\Bamboo.Manage.csproj", "{556BF9B1-90B7-4343-95E6-2A5C85777CAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bamboo.Form", "Banboo.Form\Bamboo.Form.csproj", "{8F4F3EE9-002B-4028-91E0-59E82EE58660}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bamboo.Forms", "Banboo.Forms\Bamboo.Forms.csproj", "{8F4F3EE9-002B-4028-91E0-59E82EE58660}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bamboo.Layout", "Bamboo.Layout\Bamboo.Layout.csproj", "{CCDA9444-B232-44F4-AF1B-CC858B5FF025}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bamboo.Layouts", "Bamboo.Layouts\Bamboo.Layouts.csproj", "{CCDA9444-B232-44F4-AF1B-CC858B5FF025}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bamboo", "Bamboo\Bamboo.csproj", "{59897BA4-F309-4048-9E74-CA707CFCB5C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{CCDA9444-B232-44F4-AF1B-CC858B5FF025}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCDA9444-B232-44F4-AF1B-CC858B5FF025}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCDA9444-B232-44F4-AF1B-CC858B5FF025}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59897BA4-F309-4048-9E74-CA707CFCB5C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59897BA4-F309-4048-9E74-CA707CFCB5C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59897BA4-F309-4048-9E74-CA707CFCB5C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59897BA4-F309-4048-9E74-CA707CFCB5C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
