@@ -6,7 +6,30 @@
         xmlns:local="clr-namespace:Bamboo"
         mc:Ignorable="d"
         Title="Bamboo Icon Editor" Height="450" Width="800" Icon="App.ico">
-    <Grid>
-        
-    </Grid>
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.New" Executed="New_Executed" CanExecute="New_CanExecute" />
+        <CommandBinding Command="ApplicationCommands.Open" Executed="Open_Executed" CanExecute="Open_CanExecute" />
+        <CommandBinding Command="ApplicationCommands.Save" Executed="Save_Executed" CanExecute="Save_CanExecute" />
+        <CommandBinding Command="ApplicationCommands.SaveAs" Executed="SaveAs_Executed" CanExecute="SaveAs_CanExecute" />
+        <CommandBinding Command="local:Commands.Exit" Executed="Exit_Executed" CanExecute="Exit_CanExecute" />
+    </Window.CommandBindings>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="File" Padding="8,4">
+                <MenuItem Command="ApplicationCommands.New"></MenuItem>
+                <MenuItem Command="ApplicationCommands.Open"></MenuItem>
+                <MenuItem Command="ApplicationCommands.Save"></MenuItem>
+                <MenuItem Command="ApplicationCommands.SaveAs"></MenuItem>
+                <Separator />
+                <MenuItem Command="local:Commands.Exit"></MenuItem>
+            </MenuItem>
+        </Menu>
+        <ToolBar DockPanel.Dock="Top">
+            <Button Command="ApplicationCommands.New">New</Button>
+            <Button Command="ApplicationCommands.Open">Open</Button>
+            <Button Command="ApplicationCommands.Save">Save</Button>
+        </ToolBar>
+
+        <ContentControl Content="{Binding DocumentView, RelativeSource={RelativeSource AncestorType=Window}}"/>
+    </DockPanel>
 </Window>
