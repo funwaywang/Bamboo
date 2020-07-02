@@ -16,8 +16,7 @@
                  ItemsSource="{Binding Document.Frames, RelativeSource={RelativeSource AncestorType=UserControl}}"
                  SelectedItem="{Binding SelectedFrame, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
                  BorderThickness="0,0,1,0"
-                 ScrollViewer.CanContentScroll="False"
-                 Background="{DynamicResource ResourceKey={x:Static SystemColors.ControlLightBrushKey}}">
+                 ScrollViewer.CanContentScroll="False">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="Template">
@@ -30,21 +29,29 @@
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
 
-                                        <Border Grid.Row="0" Width="48" Height="48" BorderThickness="1" BorderBrush="BlanchedAlmond">
+                                        <Border x:Name="ImageBox" Grid.Row="0" Width="48" Height="48" BorderThickness="1">
 
                                         </Border>
 
-                                        <TextBlock Name="Title" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="4">
-                                            <Run Text="{Binding Width}"></Run>
-                                            X
-                                            <Run Text="{Binding Height}"></Run>
-                                            (<Run Text="{Binding PixelBits}"></Run>)
-                                        </TextBlock>
+                                        <Border Grid.Row="1" x:Name="TitleBox" CornerRadius="4" Padding="4,1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Name="Title">
+                                                <Run Text="{Binding Width}"></Run>
+                                                X
+                                                <Run Text="{Binding Height}"></Run>
+                                                (<Run Text="{Binding PixelBits}"></Run>)
+                                            </TextBlock>                                            
+                                        </Border>
                                     </Grid>
                                 </Border>
                                 <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="ImageBox" Property="BorderBrush" Value="{DynamicResource ResourceKey={x:Static SystemColors.ControlDarkBrushKey}}" />
+                                        <Setter TargetName="TitleBox" Property="Background" Value="{DynamicResource ResourceKey={x:Static SystemColors.ControlDarkBrushKey}}" />
+                                        <Setter TargetName="Title" Property="Foreground" Value="{DynamicResource ResourceKey={x:Static SystemColors.ControlTextBrushKey}}" />
+                                    </Trigger>
                                     <Trigger Property="IsSelected" Value="True">
-                                        <Setter TargetName="OutBox" Property="Background" Value="{DynamicResource ResourceKey={x:Static SystemColors.HighlightBrushKey}}" />
+                                        <Setter TargetName="ImageBox" Property="BorderBrush" Value="{DynamicResource ResourceKey={x:Static SystemColors.HighlightBrushKey}}" />
+                                        <Setter TargetName="TitleBox" Property="Background" Value="{DynamicResource ResourceKey={x:Static SystemColors.HighlightBrushKey}}" />
                                         <Setter TargetName="Title" Property="Foreground" Value="{DynamicResource ResourceKey={x:Static SystemColors.HighlightTextBrushKey}}" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
@@ -55,9 +62,15 @@
             </ListBox.ItemContainerStyle>
         </ListBox>
 
-        <GridSplitter Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="3" />
+        <GridSplitter Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="3" Background="Transparent" />
 
-        <Border Grid.Column="1">
+        <Border Grid.Column="1" DataContext="{Binding SelectedFrame, RelativeSource={RelativeSource AncestorType=UserControl}}">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Run Text="{Binding Width}"></Run>
+                X
+                <Run Text="{Binding Height}"></Run>
+                (<Run Text="{Binding PixelBits}"></Run>)
+            </TextBlock>
         </Border>
     </Grid>
 </UserControl>

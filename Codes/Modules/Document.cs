@@ -42,7 +42,7 @@ namespace Bamboo
             }
         }
 
-        public static Task<Document> LoadAsync(Stream stream)
+        public static async Task<Document> LoadAsync(Stream stream)
         {
             using (var reader = new BinaryReader(stream))
             {
@@ -80,6 +80,15 @@ namespace Bamboo
                         ColorCount = reader.ReadByte()
                     };
 
+                    if (frame.Width == 0)
+                    {
+                        frame.Width = 256;
+                    }
+                    if (frame.Height == 0)
+                    {
+                        frame.Height = 256;
+                    }
+
                     reader.ReadByte(); // reserved, should be 0
 
                     if (documentType == DocumentType.Icon)
@@ -98,8 +107,20 @@ namespace Bamboo
                     document.Frames.Add(frame);
                 }
 
-                return Task.FromResult(document);
+                foreach(var frame in document.Frames)
+                {
+                    await LoadFrameDataAsync(reader, frame);
+                }
+
+                return document;
             }
+        }
+
+        private static Task LoadFrameDataAsync(BinaryReader reader, ImageFrame frame)
+        {
+            reader.BaseStream.Position = frame.Offset;
+
+            return Task.CompletedTask;
         }
 
         public async Task SaveAsync(string filename, DocumentType documentType)
