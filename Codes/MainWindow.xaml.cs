@@ -151,6 +151,7 @@ namespace Bamboo
                 var document = await Document.LoadAsync(filename);
                 if (document != null)
                 {
+                    document.RebuildThumbs();
                     DocumentView.Document = document;
                     Settings.Default.AddRecentFile(new FileSummary(document));
                 }

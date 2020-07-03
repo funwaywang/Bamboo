@@ -29,8 +29,8 @@
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
 
-                                        <Border x:Name="ImageBox" Grid.Row="0" Width="48" Height="48" BorderThickness="1">
-
+                                        <Border x:Name="ImageBox" Grid.Row="0" BorderThickness="1">
+                                            <Image Source="{Binding Thumb}" Stretch="None"  MaxWidth="100" MaxHeight="100" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         </Border>
 
                                         <Border Grid.Row="1" x:Name="TitleBox" CornerRadius="4" Padding="4,1" HorizontalAlignment="Center" VerticalAlignment="Center">

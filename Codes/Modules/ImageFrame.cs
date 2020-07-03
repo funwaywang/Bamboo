@@ -1,76 +1,190 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Bamboo
 {
-    public class ImageFrame : DependencyObject
+    public class ImageFrame : INotifyPropertyChanged
     {
-        public static readonly DependencyProperty WidthProperty = DependencyProperty.Register(nameof(Width), typeof(int), typeof(ImageFrame));
-        public static readonly DependencyProperty HeightProperty = DependencyProperty.Register(nameof(Height), typeof(int), typeof(ImageFrame));
-        public static readonly DependencyProperty ColorCountProperty = DependencyProperty.Register(nameof(ColorCount), typeof(int), typeof(ImageFrame));
-        public static readonly DependencyProperty DataSizeProperty = DependencyProperty.Register(nameof(DataSize), typeof(int), typeof(ImageFrame));
-        public static readonly DependencyProperty OffsetProperty = DependencyProperty.Register(nameof(Offset), typeof(int), typeof(ImageFrame));
-        public static readonly DependencyProperty ColorPlanesProperty = DependencyProperty.Register(nameof(ColorPlanes), typeof(int), typeof(ImageFrame));
-        public static readonly DependencyProperty PixelBitsProperty = DependencyProperty.Register(nameof(PixelBits), typeof(int), typeof(ImageFrame));
-        public static readonly DependencyProperty HotspotXProperty = DependencyProperty.Register(nameof(HotspotX), typeof(int), typeof(ImageFrame));
-        public static readonly DependencyProperty HotspotYProperty = DependencyProperty.Register(nameof(HotspotY), typeof(int), typeof(ImageFrame));
+        private int _OffsetInFile;
+        private int _Width;
+        private int _Height;
+        private int _ColorCount;
+        private int _ColorPlanes;
+        private int _PixelBits;
+        private int _DataSize;
+        private int _HotspotX;
+        private int _HotspotY;
+        private BitmapData _RawData;
+        private BitmapSource _Thumb;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public int Width
         {
-            get => (int)GetValue(WidthProperty);
-            set => SetValue(WidthProperty, value);
+            get => _Width;
+            set
+            {
+                if (_Width != value)
+                {
+                    _Width = value;
+                    OnPropertyChanged(nameof(Width));
+                }
+            }
         }
 
         public int Height
         {
-            get => (int)GetValue(HeightProperty);
-            set => SetValue(HeightProperty, value);
+            get => _Height;
+            set
+            {
+                if (_Height != value)
+                {
+                    _Height = value;
+                    OnPropertyChanged(nameof(Height));
+                }
+            }
         }
 
         public int ColorCount
         {
-            get => (int)GetValue(ColorCountProperty);
-            set => SetValue(ColorCountProperty, value);
+            get => _ColorCount;
+            set
+            {
+                if (_ColorCount != value)
+                {
+                    _ColorCount = value;
+                    OnPropertyChanged(nameof(ColorCount));
+                }
+            }
         }
 
         public int ColorPlanes
         {
-            get => (int)GetValue(ColorPlanesProperty);
-            set => SetValue(ColorPlanesProperty, value);
+            get => _ColorPlanes;
+            set
+            {
+                if (_ColorPlanes != value)
+                {
+                    _ColorPlanes = value;
+                    OnPropertyChanged(nameof(ColorPlanes));
+                }
+            }
         }
 
         public int PixelBits
         {
-            get => (int)GetValue(PixelBitsProperty);
-            set => SetValue(PixelBitsProperty, value);
+            get => _PixelBits;
+            set
+            {
+                if (_PixelBits != value)
+                {
+                    _PixelBits = value;
+                    OnPropertyChanged(nameof(PixelBits));
+                }
+            }
         }
 
         public int DataSize
         {
-            get => (int)GetValue(DataSizeProperty);
-            set => SetValue(DataSizeProperty, value);
-        }
-
-        public int Offset
-        {
-            get => (int)GetValue(OffsetProperty);
-            set => SetValue(OffsetProperty, value);
+            get => _DataSize;
+            set
+            {
+                if (_DataSize != value)
+                {
+                    _DataSize = value;
+                    OnPropertyChanged(nameof(DataSize));
+                }
+            }
         }
 
         public int HotspotX
         {
-            get => (int)GetValue(HotspotXProperty);
-            set => SetValue(HotspotXProperty, value);
+            get => _HotspotX;
+            set
+            {
+                if (_HotspotX != value)
+                {
+                    _HotspotX = value;
+                    OnPropertyChanged(nameof(HotspotX));
+                }
+            }
         }
 
         public int HotspotY
         {
-            get => (int)GetValue(HotspotYProperty);
-            set => SetValue(HotspotYProperty, value);
+            get => _HotspotY;
+            set
+            {
+                if (_HotspotY != value)
+                {
+                    _HotspotY = value;
+                    OnPropertyChanged(nameof(HotspotY));
+                }
+            }
+        }
+
+        public int OffsetInFile
+        {
+            get => _OffsetInFile;
+            set
+            {
+                if (_OffsetInFile != value)
+                {
+                    _OffsetInFile = value;
+                    OnPropertyChanged(nameof(OffsetInFile));
+                }
+            }
+        }
+
+        public BitmapData RawData
+        {
+            get => _RawData;
+            set
+            {
+                if (_RawData != value)
+                {
+                    _RawData = value;
+                    OnPropertyChanged(nameof(RawData));
+                }
+            }
+        }
+
+        public BitmapSource Thumb
+        {
+            get => _Thumb;
+            set
+            {
+                if (_Thumb != value)
+                {
+                    _Thumb = value;
+                    OnPropertyChanged(nameof(Thumb));
+                }
+            }
+        }
+
+        public void RebuildThumb()
+        {
+            if (RawData == null)
+            {
+                Thumb = null;
+            }
+            else
+            {
+                Thumb = BitmapSource.Create(RawData.Width, RawData.Height, 96, 96, PixelFormats.Bgr32, null, RawData.BitData, RawData.Stride);
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

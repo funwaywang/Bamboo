@@ -40,6 +40,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Drawing.Common.4.7.0\lib\net461\System.Drawing.Common.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -62,8 +66,11 @@
       <DependentUpon>DocumentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Modules\FileSummary.cs" />
+    <Compile Include="Utility\BitmapData.cs" />
+    <Compile Include="Utility\IconIOHelper.cs" />
     <Compile Include="Utility\InvalidFileFormatException.cs" />
     <Compile Include="Utility\Settings.cs" />
+    <Compile Include="Utility\StreamHelper.cs" />
     <Compile Include="Utility\UIElementExtensions.cs" />
     <Page Include="DocumentView.xaml">
       <SubType>Designer</SubType>
@@ -104,6 +111,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

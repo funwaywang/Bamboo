@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,30 +11,51 @@ using System.Windows;
 
 namespace Bamboo
 {
-    public class Document : DependencyObject
+    public class Document : INotifyPropertyChanged
     {
-        public static readonly DependencyProperty FileNameProperty = DependencyProperty.Register(nameof(FileName), typeof(string), typeof(Document));
-        public static readonly DependencyProperty TypeProperty = DependencyProperty.Register(nameof(Type), typeof(DocumentType), typeof(Document));
+        private string _FileName;
+        private DocumentType _Type;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public string FileName
         {
-            get => (string)GetValue(FileNameProperty);
-            set => SetValue(FileNameProperty, value);
+            get => _FileName;
+            set
+            {
+                if (_FileName != value)
+                {
+                    _FileName = value;
+                    OnPropertyChanged(nameof(FileName));
+                }
+            }
         }
 
         public DocumentType Type
         {
-            get => (DocumentType)GetValue(TypeProperty);
-            set => SetValue(TypeProperty, value);
+            get => _Type;
+            set
+            {
+                if (_Type != value)
+                {
+                    _Type = value;
+                    OnPropertyChanged(nameof(Type));
+                }
+            }
         }
 
         public ObservableCollection<ImageFrame> Frames { get; private set; } = new ObservableCollection<ImageFrame>();
 
-        public static async Task<Document> LoadAsync(string filename)
+        public static Task<Document> LoadAsync(string filename)
+        {
+            return Task.Factory.StartNew(() => Load(filename));
+        }
+
+        public static Document Load(string filename)
         {
             using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read))
             {
-                var document = await LoadAsync(stream);
+                var document = Load(stream);
                 if (document != null)
                 {
                     document.FileName = filename;
@@ -42,7 +65,7 @@ namespace Bamboo
             }
         }
 
-        public static async Task<Document> LoadAsync(Stream stream)
+        public static Document Load(Stream stream)
         {
             using (var reader = new BinaryReader(stream))
             {
@@ -102,25 +125,26 @@ namespace Bamboo
                         frame.HotspotY = reader.ReadInt16();
                     }
                     frame.DataSize = reader.ReadInt32();
-                    frame.Offset = reader.ReadInt32();
+                    frame.OffsetInFile = reader.ReadInt32();
 
                     document.Frames.Add(frame);
                 }
 
-                foreach(var frame in document.Frames)
+                foreach (var frame in document.Frames)
                 {
-                    await LoadFrameDataAsync(reader, frame);
+                    if (frame.Width == 256)
+                    {
+                        frame.RawData = IconIOHelper.LoadPngIconFrame(stream, frame.OffsetInFile, frame.DataSize);
+                    }
+                    else
+                    {
+                        frame.RawData = IconIOHelper.LoadBmpIconFrame(stream, frame.OffsetInFile, frame.DataSize);
+                    }
+                    //frame.RebuildImageSource();
                 }
 
                 return document;
             }
-        }
-
-        private static Task LoadFrameDataAsync(BinaryReader reader, ImageFrame frame)
-        {
-            reader.BaseStream.Position = frame.Offset;
-
-            return Task.CompletedTask;
         }
 
         public async Task SaveAsync(string filename, DocumentType documentType)
@@ -136,6 +160,19 @@ namespace Bamboo
         public Task SaveAsync(Stream stream, DocumentType documentType)
         {
             return Task.CompletedTask;
+        }
+
+        public void RebuildThumbs()
+        {
+            foreach(var frame in Frames)
+            {
+                frame.RebuildThumb();
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
