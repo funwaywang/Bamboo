@@ -8,7 +8,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150" MaxWidth="200" MinWidth="100" />
+            <ColumnDefinition Width="150" MaxWidth="200" MinWidth="120" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -17,42 +17,49 @@
                  SelectedItem="{Binding SelectedFrame, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
                  BorderThickness="0,0,1,0"
                  ScrollViewer.CanContentScroll="False">
+            <ListBox.Resources>
+                <local:ImageWidthConverter x:Key="ImageWidthConverter" MaxWidth="80" />
+            </ListBox.Resources>
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
+                    <Setter Property="BorderBrush" Value="{DynamicResource ResourceKey={x:Static SystemColors.ControlDarkBrushKey}}" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="ListBoxItem">
                                 <Border x:Name="OutBox" MaxHeight="150">
-                                    <Grid Height="100" Background="Transparent">
+                                    <Grid Background="Transparent">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*" />
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
 
-                                        <Border x:Name="ImageBox" Grid.Row="0" BorderThickness="1">
-                                            <Image Source="{Binding Thumb}" Stretch="None"  MaxWidth="100" MaxHeight="100" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Border x:Name="ImageBox" Grid.Row="0" Padding="0" Margin="2,8"
+                                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image Source="{Binding Thumb}" Stretch="Uniform" Width="{Binding Thumb, Converter={StaticResource ImageWidthConverter}}" />
                                         </Border>
 
-                                        <Border Grid.Row="1" x:Name="TitleBox" CornerRadius="4" Padding="4,1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <TextBlock Name="Title">
+                                        <Border Grid.Row="1" x:Name="TitleBox" CornerRadius="4" Padding="4,1" Margin="2">
+                                            <TextBlock Name="Title" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                 <Run Text="{Binding Width}"></Run>
                                                 X
                                                 <Run Text="{Binding Height}"></Run>
-                                                (<Run Text="{Binding PixelBits}"></Run>)
+                                                (<Run Text="{Binding PixelBits}"></Run>bit)
                                             </TextBlock>                                            
                                         </Border>
                                     </Grid>
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="ImageBox" Property="BorderBrush" Value="{DynamicResource ResourceKey={x:Static SystemColors.ControlDarkBrushKey}}" />
-                                        <Setter TargetName="TitleBox" Property="Background" Value="{DynamicResource ResourceKey={x:Static SystemColors.ControlDarkBrushKey}}" />
-                                        <Setter TargetName="Title" Property="Foreground" Value="{DynamicResource ResourceKey={x:Static SystemColors.ControlTextBrushKey}}" />
+                                        <!--<Setter TargetName="ImageBox" Property="BorderBrush" Value="{DynamicResource ResourceKey={x:Static SystemColors.ControlDarkBrushKey}}" />-->
+                                        <Setter TargetName="OutBox" Property="Background" Value="{DynamicResource ResourceKey={x:Static SystemColors.ControlDarkBrushKey}}" />
+                                        <!--<Setter TargetName="Title" Property="Foreground" Value="{DynamicResource ResourceKey={x:Static SystemColors.ControlTextBrushKey}}" />-->
                                     </Trigger>
                                     <Trigger Property="IsSelected" Value="True">
-                                        <Setter TargetName="ImageBox" Property="BorderBrush" Value="{DynamicResource ResourceKey={x:Static SystemColors.HighlightBrushKey}}" />
-                                        <Setter TargetName="TitleBox" Property="Background" Value="{DynamicResource ResourceKey={x:Static SystemColors.HighlightBrushKey}}" />
+                                        <!--<Setter TargetName="ImageBox" Property="BorderBrush" Value="{DynamicResource ResourceKey={x:Static SystemColors.HighlightBrushKey}}" />-->
+                                        <Setter TargetName="OutBox" Property="Background" Value="{DynamicResource ResourceKey={x:Static SystemColors.HighlightBrushKey}}" />
                                         <Setter TargetName="Title" Property="Foreground" Value="{DynamicResource ResourceKey={x:Static SystemColors.HighlightTextBrushKey}}" />
+                                        <Setter TargetName="TitleBox" Property="Background" Value="{DynamicResource ResourceKey={x:Static SystemColors.HighlightBrushKey}}" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -62,15 +69,9 @@
             </ListBox.ItemContainerStyle>
         </ListBox>
 
-        <GridSplitter Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="3" Background="Transparent" />
-
         <Border Grid.Column="1" DataContext="{Binding SelectedFrame, RelativeSource={RelativeSource AncestorType=UserControl}}">
-            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Run Text="{Binding Width}"></Run>
-                X
-                <Run Text="{Binding Height}"></Run>
-                (<Run Text="{Binding PixelBits}"></Run>)
-            </TextBlock>
+            <local:ImageEditBox ImageFrame="{Binding SelectedFrame, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                HorizontalAlignment="Center" VerticalAlignment="Center" />
         </Border>
     </Grid>
 </UserControl>

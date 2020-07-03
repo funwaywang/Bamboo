@@ -135,6 +135,11 @@ namespace Bamboo
                     if (frame.Width == 256)
                     {
                         frame.RawData = IconIOHelper.LoadPngIconFrame(stream, frame.OffsetInFile, frame.DataSize);
+                        if (frame.RawData != null)
+                        {
+                            frame.Width = frame.RawData.Width;
+                            frame.Height = frame.RawData.Height;
+                        }
                     }
                     else
                     {

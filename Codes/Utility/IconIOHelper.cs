@@ -18,6 +18,7 @@ namespace Bamboo
                 stream.Position = offset;
                 stream.CopySegmentTo(ms, length);
                 ms.Position = 0;
+
                 return BitmapData.LoadStream(ms);
             }
         }
@@ -44,9 +45,10 @@ namespace Bamboo
 
                 int height = Math.Abs(info.biHeight) / 2;
 
+                BitmapData bitmapData = null;
                 if (info.biCompression == BitmapCompression.BI_BITFIELDS)
                 {
-                    return ReadBmpData_BITFIELDS(reader, info, height);
+                    bitmapData = LoadBmpData_BITFIELDS(reader, info, height);
                 }
                 else
                 {
@@ -70,25 +72,54 @@ namespace Bamboo
 
                     if (info.biCompression == BitmapCompression.BI_RLE4)
                     {
-                        return ReadBmpData_RLE4(reader, info, height, colorTable);
+                        bitmapData = LoadBmpData_RLE4(reader, info, height, colorTable);
                     }
                     else if (info.biCompression == BitmapCompression.BI_RLE8)
                     {
-                        return ReadBmpData_RLE8(reader, info, height, colorTable);
+                        bitmapData = LoadBmpData_RLE8(reader, info, height, colorTable);
                     }
                     else if (colorTable != null)
                     {
-                        return ReadBitmapData(stream, info, height, colorTable);
+                        bitmapData = LoadBitmapData(stream, info, height, colorTable);
                     }
                     else
                     {
-                        return ReadBitmapData(stream, info, height);
+                        bitmapData = LoadBitmapData(stream, info, height);
                     }
                 }
+
+                // load AND mask
+                var andMask = new List<bool[]>();
+                int stride = (info.biWidth + 31) / 32 * 4;
+                for (int y = 0; y < height; y++)
+                {
+                    byte[] line = new byte[stride];
+                    stream.Read(line, 0, line.Length);
+                    var lineMask = new List<bool>();
+                    foreach(var lb in line)
+                    {
+                        lineMask.Add((lb & 0b_1000_0000) == 0);
+                        lineMask.Add((lb & 0b_0100_0000) == 0);
+                        lineMask.Add((lb & 0b_0010_0000) == 0);
+                        lineMask.Add((lb & 0b_0001_0000) == 0);
+                        lineMask.Add((lb & 0b_0000_1000) == 0);
+                        lineMask.Add((lb & 0b_0000_0100) == 0);
+                        lineMask.Add((lb & 0b_0000_0010) == 0);
+                        lineMask.Add((lb & 0b_0000_0001) == 0);
+                    }
+                    andMask.Add(lineMask.ToArray());
+                }
+                andMask.Reverse();
+                if (info.biBitCount < 32)
+                {
+                    bitmapData.AndMaskToAlpha(andMask);
+                }
+
+                return bitmapData;
             }
         }
 
-        private static BitmapData ReadBmpData_RLE4(BinaryReader reader, BITMAPINFOHEADER info, int height, Color[] colorTable)
+        private static BitmapData LoadBmpData_RLE4(BinaryReader reader, BITMAPINFOHEADER info, int height, Color[] colorTable)
         {
             var lines = new List<List<Color>>();
             for (int y = 0; y < height; y++)
@@ -148,7 +179,7 @@ namespace Bamboo
             return new BitmapData(info.biWidth, lines);
         }
 
-        private static BitmapData ReadBmpData_RLE8(BinaryReader reader, BITMAPINFOHEADER info, int height, Color[] colorTable)
+        private static BitmapData LoadBmpData_RLE8(BinaryReader reader, BITMAPINFOHEADER info, int height, Color[] colorTable)
         {
             var lines = new List<List<Color>>();
             for (int y = 0; y < height; y++)
@@ -194,7 +225,7 @@ namespace Bamboo
             return new BitmapData(info.biWidth, lines);
         }
 
-        private static BitmapData ReadBmpData_BITFIELDS(BinaryReader reader, BITMAPINFOHEADER info, int height)
+        private static BitmapData LoadBmpData_BITFIELDS(BinaryReader reader, BITMAPINFOHEADER info, int height)
         {
             uint rMask = reader.ReadUInt32();
             uint gMask = reader.ReadUInt32();
@@ -243,7 +274,7 @@ namespace Bamboo
             return index;
         }
 
-        private static BitmapData ReadBitmapData(Stream stream, BITMAPINFOHEADER info, int height)
+        private static BitmapData LoadBitmapData(Stream stream, BITMAPINFOHEADER info, int height)
         {
             var lines = new List<List<Color>>();
             int stride = ((info.biWidth * info.biBitCount) + 31) / 32 * 4;
@@ -294,7 +325,7 @@ namespace Bamboo
             return new BitmapData(info.biWidth, lines);
         }
 
-        private static BitmapData ReadBitmapData(Stream stream, BITMAPINFOHEADER info, int height, Color[] colorTable)
+        private static BitmapData LoadBitmapData(Stream stream, BITMAPINFOHEADER info, int height, Color[] colorTable)
         {
             byte[] bit1_masks = new byte[] { 0b_1000_0000, 0b_0100_0000, 0b_0010_0000, 0b_0001_0000, 0b_0000_1000, 0b_0000_0100, 0b_0000_0010, 0b_0000_0001 };
 

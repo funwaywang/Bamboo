@@ -178,7 +178,7 @@ namespace Bamboo
             }
             else
             {
-                Thumb = BitmapSource.Create(RawData.Width, RawData.Height, 96, 96, PixelFormats.Bgr32, null, RawData.BitData, RawData.Stride);
+                Thumb = BitmapSource.Create(RawData.Width, RawData.Height, 96, 96, PixelFormats.Bgra32, null, RawData.BitData, RawData.Stride);
             }
         }
 

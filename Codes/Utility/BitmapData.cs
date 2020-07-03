@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Navigation;
@@ -66,7 +67,7 @@ namespace Bamboo
             Height = height;
             Stride = width * 4;
             BitData = (from c in pixels
-                       from b in new byte[] { c.R, c.G, c.B, c.A }
+                       from b in new byte[] { c.B, c.G, c.R, c.A }
                        select b).ToArray();
         }
 
@@ -77,7 +78,7 @@ namespace Bamboo
             Height = lines.Count();
             BitData = (from l in lines
                        from c in l
-                       from b in new byte[] { c.R, c.G, c.B, c.A }
+                       from b in new byte[] { c.B, c.G, c.R, c.A }
                        select b).ToArray();
         }
 
@@ -253,6 +254,23 @@ namespace Bamboo
             }
 
             return buffer;
+        }
+
+        public void AndMaskToAlpha(List<bool[]> andMask)
+        {
+            var p = 0;
+            for (int y = 0; y < Height; y++)
+            {
+                var pl = p;
+                var lineMask = andMask[y];
+                for (int x = 0; x < Width; x++)
+                {
+                    BitData[pl + 3] = lineMask[x] ? (byte)0xFF : (byte)0x00;
+                    pl += PixelBytes;
+                }
+
+                p += Stride;
+            }
         }
     }
 
