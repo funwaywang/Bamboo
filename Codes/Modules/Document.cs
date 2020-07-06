@@ -117,7 +117,7 @@ namespace Bamboo
                     if (documentType == DocumentType.Icon)
                     {
                         frame.ColorPlanes = reader.ReadInt16();
-                        frame.PixelBits = reader.ReadInt16();
+                        frame.BitsPrePixel = reader.ReadInt16();
                     }
                     else
                     {
@@ -145,7 +145,6 @@ namespace Bamboo
                     {
                         frame.RawData = IconIOHelper.LoadBmpIconFrame(stream, frame.OffsetInFile, frame.DataSize);
                     }
-                    //frame.RebuildImageSource();
                 }
 
                 return document;
@@ -164,12 +163,39 @@ namespace Bamboo
 
         public Task SaveAsync(Stream stream, DocumentType documentType)
         {
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((short)0x00);
+                writer.Write((short)documentType);
+                writer.Write((short)Frames.Count);
+
+                foreach (var frame in Frames)
+                {
+                    writer.Write(frame.Width > 0xff ? (byte)0x00 : (byte)frame.Width);
+                    writer.Write(frame.Height > 0xff ? (byte)0x00 : (byte)frame.Height);
+                    writer.Write(frame.ColorCount > 0xff ? (byte)0x00 : (byte)frame.ColorCount);
+                    writer.Write((byte)0x00);
+                    if (documentType == DocumentType.Icon)
+                    {
+                        writer.Write((short)frame.ColorPlanes);
+                        writer.Write((short)frame.BitsPrePixel);
+                    }
+                    else
+                    {
+                        writer.Write(frame.HotspotX);
+                        writer.Write(frame.HotspotY);
+                    }
+                    writer.Write(frame.DataSize);
+                    writer.Write(frame.OffsetInFile);
+                }
+            }
+
             return Task.CompletedTask;
         }
 
         public void RebuildThumbs()
         {
-            foreach(var frame in Frames)
+            foreach (var frame in Frames)
             {
                 frame.RebuildThumb();
             }

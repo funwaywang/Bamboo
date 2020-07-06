@@ -67,6 +67,7 @@ namespace Bamboo
             }
 
             saveFileDialog.FilterIndex = Document.Type == DocumentType.Icon ? 1 : 2;
+            saveFileDialog.FileName = Document.FileName;
             if (saveFileDialog.ShowDialog(Window.GetWindow(this)) == true)
             {
                 try

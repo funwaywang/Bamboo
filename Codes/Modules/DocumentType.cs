@@ -1,8 +1,8 @@
 ﻿namespace Bamboo
 {
-    public enum DocumentType
+    public enum DocumentType : short
     {
-        Icon,
-        Cursor
+        Icon = 1,
+        Cursor = 2
     }
 }

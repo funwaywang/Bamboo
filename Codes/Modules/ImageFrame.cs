@@ -18,10 +18,10 @@ namespace Bamboo
         private int _Height;
         private int _ColorCount;
         private int _ColorPlanes;
-        private int _PixelBits;
+        private int _BitsPrePixel;
         private int _DataSize;
-        private int _HotspotX;
-        private int _HotspotY;
+        private short _HotspotX;
+        private short _HotspotY;
         private BitmapData _RawData;
         private BitmapSource _Thumb;
 
@@ -79,15 +79,15 @@ namespace Bamboo
             }
         }
 
-        public int PixelBits
+        public int BitsPrePixel
         {
-            get => _PixelBits;
+            get => _BitsPrePixel;
             set
             {
-                if (_PixelBits != value)
+                if (_BitsPrePixel != value)
                 {
-                    _PixelBits = value;
-                    OnPropertyChanged(nameof(PixelBits));
+                    _BitsPrePixel = value;
+                    OnPropertyChanged(nameof(BitsPrePixel));
                 }
             }
         }
@@ -105,7 +105,7 @@ namespace Bamboo
             }
         }
 
-        public int HotspotX
+        public short HotspotX
         {
             get => _HotspotX;
             set
@@ -118,7 +118,7 @@ namespace Bamboo
             }
         }
 
-        public int HotspotY
+        public short HotspotY
         {
             get => _HotspotY;
             set
